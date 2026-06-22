@@ -14,6 +14,7 @@
   },
   "Portfolio": {
     "heroLine1": "Construyendo software,",
+    "foodiedotTitle": "Foodie Dot: Diario Culinario",
     "heroLine2": "IA y productos reales.",
     "heroSub": "Ingeniero de IA y desarrollador desde España. Creo apps web, móviles y sistemas inteligentes.",
     "contactCta": "Contactar",
@@ -41,7 +42,7 @@
     "backToBlog": "Volver al Blog",
     "appStore": "App Store",
     "playStore": "Google Play",
-    "foodiedotDesc": "App de diario culinario en iOS y Android con Capacitor. Registra experiencias gastronómicas y construye tu diario personal.",
+    "foodiedotDesc": "App de diario culinario en iOS y Android con Capacitor. Registra experiencias gastronómicas y construye tu diario con tu pareja, familia o grupo de amigos.",
     "webVersion": "Web",
     "foodiedotTech": "React · Tailwind · Capacitor · Ionic · TypeScript",
     "presentLabel": "Presente",

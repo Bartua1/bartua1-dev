@@ -119,9 +119,9 @@ export default async function PortfolioPage({ params }: PageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#ebebea] py-8 px-4 sm:py-12 sm:px-8 font-sans">
+    <div className="min-h-screen bg-[#ebebea] py-8 px-4 sm:py-12 sm:px-8 font-sans bg-grain overflow-hidden">
       {/* ── Outer card ── */}
-      <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm overflow-hidden">
+      <div className="relative z-10 max-w-3xl lg:max-w-5xl mx-auto bg-white rounded-3xl shadow-sm overflow-hidden transition-all duration-300">
 
         {/* ── Top bar ── */}
         <header className="flex justify-between items-center px-6 py-4 border-b border-stone-100">
@@ -173,11 +173,11 @@ export default async function PortfolioPage({ params }: PageProps) {
           </div>
 
           {/* Headline */}
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 leading-tight max-w-sm">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 leading-tight max-w-sm sm:max-w-md lg:max-w-xl">
             {t('heroLine1')} <span className="text-stone-900">{t('heroLine2')}</span>
           </h1>
 
-          <p className="mt-4 text-sm text-stone-500 leading-relaxed max-w-xs">
+          <p className="mt-4 text-sm text-stone-500 leading-relaxed max-w-xs sm:max-w-sm lg:max-w-md">
             {t('heroSub')}
           </p>
 
@@ -214,7 +214,7 @@ export default async function PortfolioPage({ params }: PageProps) {
         <section className="border-b border-stone-100">
           {/* Heading area */}
           <div className="px-10 pt-12 pb-4 text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 leading-snug max-w-md mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 leading-snug max-w-md lg:max-w-2xl mx-auto">
               {t('collaborateTitle')}
             </h2>
           </div>
@@ -243,7 +243,7 @@ export default async function PortfolioPage({ params }: PageProps) {
         <section className="border-b border-stone-100">
           {/* Heading area */}
           <div className="px-10 pt-10 pb-4 text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 leading-snug max-w-md mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 leading-snug max-w-md lg:max-w-2xl mx-auto">
               {t('educationTitle')}
             </h2>
           </div>
@@ -300,7 +300,7 @@ export default async function PortfolioPage({ params }: PageProps) {
               <div className="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden border border-stone-200 shadow-sm">
                 <Image
                   src="/dev/assets/Foodie.png"
-                  alt="FoodieDot"
+                  alt="Foodie Dot"
                   width={48}
                   height={48}
                   className="object-cover w-full h-full"
@@ -309,7 +309,7 @@ export default async function PortfolioPage({ params }: PageProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-sm font-bold text-stone-900 group-hover:text-amber-600 transition-colors duration-200">FoodieDot</h3>
+                  <h3 className="text-sm font-bold text-stone-900 group-hover:text-amber-600 transition-colors duration-200">{t('foodiedotTitle')}</h3>
                   <span className="text-[0.6rem] font-mono font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Live</span>
                 </div>
                 <p className="text-xs text-stone-500 mt-1 leading-relaxed">{t('foodiedotDesc')}</p>

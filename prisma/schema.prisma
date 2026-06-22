@@ -1,0 +1,26 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  titleEs     String
+  titleEn     String
+  contentEs   String   // Markdown string in Spanish
+  contentEn   String   // Markdown string in English
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  views       Int      @default(0)
+}
+
+model Analytics {
+  id        Int      @id @default(autoincrement())
+  slug      String   // Path name
+  visitedAt DateTime @default(now())
+  country   String?  // Optional metadata
+}

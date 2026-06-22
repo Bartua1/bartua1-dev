@@ -1,0 +1,25 @@
+{
+  "Navigation": {
+    "home": "Inicio",
+    "portfolio": "Portafolio",
+    "langToggle": "English"
+  },
+  "Blog": {
+    "title": "Blog de Desarrollo",
+    "description": "Artículos sobre desarrollo de software, DevOps, y hosting en Raspberry Pi.",
+    "views": "{count} vistas",
+    "readMore": "Leer más",
+    "publishedAt": "Publicado el {date}",
+    "noPosts": "No hay publicaciones disponibles."
+  },
+  "Portfolio": {
+    "title": "Guillermo Bartual",
+    "subtitle": "Ingeniero de Software / DevOps",
+    "aboutMe": "Sobre mí",
+    "experience": "Experiencia Profesional",
+    "education": "Educación",
+    "skills": "Habilidades Técnicas",
+    "backToBlog": "Volver al Blog",
+    "description": "Apasionado por la automatización, infraestructuras ligeras, desarrollo backend y la optimización de sistemas. Actualmente experimentando con despliegues caseros y servicios autohospedados."
+  }
+}

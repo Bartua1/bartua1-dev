@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { headers } from 'next/headers';
 import BlogClientLayout from '@/components/BlogClientLayout';
+import { Post } from '@prisma/client';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -15,9 +16,14 @@ export default async function BlogPage({ params }: PageProps) {
   const tNav = await getTranslations('Navigation');
 
   // Fetch posts from database
-  const posts = await prisma.post.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  let posts: Post[] = [];
+  try {
+    posts = await prisma.post.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (err) {
+    console.error('[Blog] Failed to fetch posts from database:', err);
+  }
 
   // Extract client IP and verify admin permissions
   const headersList = await headers();

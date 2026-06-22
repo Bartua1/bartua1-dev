@@ -13,9 +13,14 @@ export async function generateMetadata({ params }: PageProps) {
   const { locale: rawLocale, slug } = await params;
   const locale = ['es', 'en'].includes(rawLocale) ? rawLocale : 'es';
   
-  const post = await prisma.post.findUnique({
-    where: { slug }
-  });
+  let post = null;
+  try {
+    post = await prisma.post.findUnique({
+      where: { slug }
+    });
+  } catch (err) {
+    console.error(`[Blog] Failed to fetch post metadata for slug ${slug}:`, err);
+  }
 
   if (!post) {
     return { title: 'Post Not Found' };
@@ -35,9 +40,14 @@ export default async function PostDetailPage({ params }: PageProps) {
   const tNav = await getTranslations('Navigation');
   const tPort = await getTranslations('Portfolio');
 
-  const post = await prisma.post.findUnique({
-    where: { slug }
-  });
+  let post = null;
+  try {
+    post = await prisma.post.findUnique({
+      where: { slug }
+    });
+  } catch (err) {
+    console.error(`[Blog] Failed to fetch post detail for slug ${slug}:`, err);
+  }
 
   if (!post) {
     notFound();

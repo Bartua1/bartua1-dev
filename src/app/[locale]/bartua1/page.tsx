@@ -41,11 +41,12 @@ function IconArrow() {
   );
 }
 
-function IconBrain() {
+function IconSparkles() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-1.544-4.668 2.5 2.5 0 0 1-.046-4.886A2.5 2.5 0 0 1 9.5 2Z" />
-      <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 1.544-4.668 2.5 2.5 0 0 0 .046-4.886A2.5 2.5 0 0 0 14.5 2Z" />
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+      <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5 5 3Z" />
+      <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z" />
     </svg>
   );
 }
@@ -68,11 +69,14 @@ function IconMobile() {
   );
 }
 
-function IconGear() {
+function IconWorkflow() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      <rect x="3" y="3" width="6" height="6" rx="1" />
+      <rect x="15" y="3" width="6" height="6" rx="1" />
+      <rect x="9" y="15" width="6" height="6" rx="1" />
+      <path d="M6 9v3a2 2 0 0 0 2 2h1" />
+      <path d="M18 9v3a2 2 0 0 1-2 2h-1" />
     </svg>
   );
 }
@@ -85,10 +89,10 @@ function IconApple() {
   );
 }
 
-function IconAndroid() {
+function IconGooglePlay() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M17.523 15.341A7.954 7.954 0 0 0 20 9.8C20 5.472 16.418 2 12 2S4 5.472 4 9.8a7.954 7.954 0 0 0 2.477 5.541L5 17.648C4.38 18.602 5.09 19.8 6.21 19.8H17.79c1.12 0 1.83-1.198 1.21-2.152l-1.477-2.307zM8.5 8a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z" />
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M14.222 9.374c1.037-.61 1.037-2.137 0-2.748L11.528 5.04 8.32 8l3.207 2.96 2.694-1.586Zm-3.595 2.116L7.583 8.68 1.03 14.73c.201 1.029 1.36 1.61 2.303 1.055l7.294-4.295ZM1 13.396V2.603L6.846 8 1 13.396ZM1.03 1.27l6.553 6.05 3.044-2.81L3.333.215C2.39-.341 1.231.24 1.03 1.27Z" />
     </svg>
   );
 }
@@ -107,15 +111,15 @@ export default async function PortfolioPage({ params }: PageProps) {
   const companies = [
     { name: 'Grupo Azvi', src: '/dev/assets/Grupo_Azvi_Logo.png' },
     { name: 'Turify', src: '/dev/assets/turify.png' },
-    { name: 'Fidetia', src: '/dev/assets/fidetia.jpg' },
-    { name: 'Fius', src: '/dev/assets/fius.jpg' },
+    { name: 'Fidetia', src: '/dev/assets/fidetia.png' },
+    { name: 'Fius', src: '/dev/assets/fius.png' },
   ];
 
   const services = [
-    { icon: <IconBrain />, title: t('serviceAI'), desc: t('serviceAIDesc') },
-    { icon: <IconCode />, title: t('serviceBackend'), desc: t('serviceBackendDesc') },
-    { icon: <IconMobile />, title: t('serviceApp'), desc: t('serviceAppDesc') },
-    { icon: <IconGear />, title: t('serviceAuto'), desc: t('serviceAutoDesc') },
+    { icon: <IconSparkles />, title: t('serviceAI'), desc: t('serviceAIDesc'), tags: ['RAG', 'Copilot', 'PyTorch', '...'] },
+    { icon: <IconCode />, title: t('serviceBackend'), desc: t('serviceBackendDesc'), tags: ['Node', 'React', 'Supabase', 'SQL', '...'] },
+    { icon: <IconMobile />, title: t('serviceApp'), desc: t('serviceAppDesc'), tags: ['Capacitor', 'Swift', 'React Native', '...'] },
+    { icon: <IconWorkflow />, title: t('serviceAuto'), desc: t('serviceAutoDesc'), tags: ['Hermess', 'OpenClaw', 'Power Automate', 'UiPath'] },
   ];
 
   return (
@@ -156,20 +160,27 @@ export default async function PortfolioPage({ params }: PageProps) {
 
         {/* ── Hero ── */}
         <section className="px-8 pt-12 pb-10 flex flex-col items-center text-center border-b border-stone-100">
-          {/* Avatar */}
-          <div className="relative mb-6">
-            <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-stone-200 shadow-md">
+          {/* Avatar & Name/Profession */}
+          <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 text-center sm:text-left">
+            <div className="w-40 h-40 rounded-full overflow-hidden ring-2 ring-stone-200 shadow-md flex-shrink-0">
               <Image
                 src="/dev/assets/professionalphoto.jpg"
-                alt="Gonzalo Bartual"
-                width={80}
-                height={80}
+                alt={t('title')}
+                width={160}
+                height={160}
                 className="object-cover w-full h-full"
                 priority
                 unoptimized
               />
             </div>
-            <span className="absolute -bottom-1 -right-1 bg-emerald-400 w-4 h-4 rounded-full border-2 border-white" aria-label="Available" />
+            <div className="flex flex-col justify-center">
+              <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+                {t('title')}
+              </h2>
+              <p className="text-sm font-semibold uppercase tracking-wider text-stone-500 mt-1 font-mono">
+                {t('profession')}
+              </p>
+            </div>
           </div>
 
           {/* Headline */}
@@ -211,56 +222,48 @@ export default async function PortfolioPage({ params }: PageProps) {
         </section>
 
         {/* ── Collaborate / Services ── */}
-        <section className="border-b border-stone-100">
-          {/* Heading area */}
-          <div className="px-10 pt-12 pb-4 text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 leading-snug max-w-md lg:max-w-2xl mx-auto">
-              {t('collaborateTitle')}
-            </h2>
-          </div>
-
-          {/* Floating pill divider */}
-          <div className="relative flex items-center justify-center py-2">
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-stone-200" />
-            <span className="relative z-10 bg-white border border-stone-200 shadow-sm text-xs font-semibold text-stone-600 px-5 py-2 rounded-full">
-              {t('servicesLabel')}
-            </span>
-          </div>
+        <section className="px-8 py-8 border-b border-stone-100">
+          <h2 className="text-[0.65rem] font-mono uppercase tracking-widest text-stone-400 mb-5">
+            {t('servicesLabel')}
+          </h2>
 
           {/* 4-column service list */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 px-8 py-8 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {services.map((s) => (
-              <div key={s.title} className="flex flex-col gap-2">
-                <div className="text-stone-400">{s.icon}</div>
-                <p className="text-sm font-bold text-stone-900 leading-tight">{s.title}</p>
-                <p className="text-xs text-stone-500 leading-relaxed">{s.desc}</p>
+              <div key={s.title} className="flex flex-col gap-3 group">
+                <div className="text-stone-400 group-hover:text-stone-600 transition-colors duration-200">
+                  {s.icon}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-stone-900 leading-tight">{s.title}</p>
+                  <p className="text-xs text-stone-500 leading-relaxed mt-1">{s.desc}</p>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
+                  {s.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[0.6rem] font-mono font-semibold px-2 py-0.5 rounded-full bg-stone-100/70 border border-stone-200/50 text-stone-600 hover:bg-stone-200/60 hover:text-stone-800 transition-colors duration-200 cursor-default"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── Education ── */}
-        <section className="border-b border-stone-100">
-          {/* Heading area */}
-          <div className="px-10 pt-10 pb-4 text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 leading-snug max-w-md lg:max-w-2xl mx-auto">
-              {t('educationTitle')}
-            </h2>
-          </div>
-
-          {/* Floating pill divider */}
-          <div className="relative flex items-center justify-center py-2">
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-stone-200" />
-            <span className="relative z-10 bg-white border border-stone-200 shadow-sm text-xs font-semibold text-stone-600 px-5 py-2 rounded-full">
-              {t('education')}
-            </span>
-          </div>
+        <section className="px-8 py-8 border-b border-stone-100">
+          <h2 className="text-[0.65rem] font-mono uppercase tracking-widest text-stone-400 mb-5">
+            {t('education')}
+          </h2>
 
           {/* 2-column university list */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 px-8 py-8 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* UAX */}
-            <div className="flex flex-col gap-3">
-              <div className="relative h-10 w-32 grayscale opacity-60">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-all duration-300 group">
+              <div className="relative h-10 w-32 grayscale opacity-60 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300 flex-shrink-0">
                 <Image
                   src="/dev/assets/universidad_UAX.png"
                   alt="Universidad Alfonso X el Sabio"
@@ -269,12 +272,14 @@ export default async function PortfolioPage({ params }: PageProps) {
                   unoptimized
                 />
               </div>
-              <p className="text-sm font-bold text-stone-900 leading-tight">{t('degreeAI')}</p>
-              <p className="text-xs text-stone-500">{t('universityUAX')}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-stone-900 leading-tight">{t('degreeAI')}</p>
+                <p className="text-xs text-stone-500 mt-1">{t('universityUAX')}</p>
+              </div>
             </div>
             {/* US */}
-            <div className="flex flex-col gap-3">
-              <div className="relative h-10 w-32 grayscale opacity-60">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-all duration-300 group">
+              <div className="relative h-10 w-32 grayscale opacity-60 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300 flex-shrink-0">
                 <Image
                   src="/dev/assets/universidad_US.png"
                   alt="Universidad de Sevilla"
@@ -283,8 +288,10 @@ export default async function PortfolioPage({ params }: PageProps) {
                   unoptimized
                 />
               </div>
-              <p className="text-sm font-bold text-stone-900 leading-tight">{t('degreeCS')}</p>
-              <p className="text-xs text-stone-500">{t('universityUS')}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-stone-900 leading-tight">{t('degreeCS')}</p>
+                <p className="text-xs text-stone-500 mt-1">{t('universityUS')}</p>
+              </div>
             </div>
           </div>
         </section>
@@ -332,7 +339,7 @@ export default async function PortfolioPage({ params }: PageProps) {
                 <a href="https://play.google.com/store/apps/details?id=com.foodiedot.app"
                   target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 text-white text-[0.65rem] font-semibold px-3 py-1.5 rounded-lg transition-all duration-200">
-                  <IconAndroid /> {t('playStore')}
+                  <IconGooglePlay /> {t('playStore')}
                 </a>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { routing } from '@/i18n/routing';
+import { routing, Locale } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import '../globals.css';
 
@@ -19,7 +19,7 @@ interface LayoutProps {
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
 
@@ -27,7 +27,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale}>
-      <body className="antialiased bg-[#f0efed]">
+      <body className="antialiased bg-[#f0efed] vsc-initialized">
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

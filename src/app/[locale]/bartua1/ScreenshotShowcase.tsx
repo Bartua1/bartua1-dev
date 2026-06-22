@@ -71,7 +71,7 @@ export default function ScreenshotShowcase({
   }, [isHovered]);
 
   return (
-    <div 
+    <div
       className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center w-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -96,9 +96,6 @@ export default function ScreenshotShowcase({
                 <h3 className="text-lg font-black text-stone-900 tracking-tight">
                   {tTitle}
                 </h3>
-                <span className="text-[0.65rem] font-mono font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shadow-xs">
-                  Live
-                </span>
               </div>
               <p className="text-xs font-mono text-stone-400 mt-0.5">
                 iOS · Android · Web App
@@ -145,11 +142,10 @@ export default function ScreenshotShowcase({
                 <button
                   key={idx}
                   onClick={() => setActiveIdx(idx)}
-                  className={`relative w-12 sm:w-14 aspect-[9/19.2] rounded-lg overflow-hidden border-2 bg-stone-900 transition-all duration-300 hover:scale-105 active:scale-95 ${
-                    idx === activeIdx
-                      ? 'border-amber-500 shadow-md ring-2 ring-amber-500/20 scale-105 opacity-100'
-                      : 'border-stone-200 opacity-55 hover:opacity-85'
-                  }`}
+                  className={`relative w-12 sm:w-14 aspect-[9/19.2] rounded-lg overflow-hidden border-2 bg-stone-900 transition-all duration-300 hover:scale-105 active:scale-95 ${idx === activeIdx
+                    ? 'border-amber-500 shadow-md ring-2 ring-amber-500/20 scale-105 opacity-100'
+                    : 'border-stone-200 opacity-55 hover:opacity-85'
+                    }`}
                   aria-label={`View screenshot ${idx + 1}`}
                 >
                   <Image
@@ -211,7 +207,7 @@ export default function ScreenshotShowcase({
 
           {/* ── Phone Body (Newer iPhone Pro style with ultra-thin 5px bezels) ── */}
           <div className="relative w-full h-full rounded-[2.9rem] bg-black p-[5px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.45)] border border-stone-850 ring-1 ring-stone-900/15 transition-all duration-500 hover:shadow-[0_30px_60px_-10px_rgba(0,0,0,0.5)] hover:-translate-y-1 z-10">
-            
+
             {/* Dynamic Island */}
             <div className="absolute top-[11px] left-1/2 -translate-x-1/2 w-[72px] h-[20px] bg-black rounded-full z-30 flex items-center justify-end pr-2.5 shadow-[inset_0_1px_3px_rgba(255,255,255,0.1),_inset_0_-1px_2px_rgba(0,0,0,0.8)]">
               {/* Camera lens reflection + green dot */}
@@ -233,9 +229,8 @@ export default function ScreenshotShowcase({
               {SCREENSHOTS.map((screen, idx) => (
                 <div
                   key={idx}
-                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                    idx === activeIdx ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                  }`}
+                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === activeIdx ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                    }`}
                 >
                   <Image
                     src={screen.src}

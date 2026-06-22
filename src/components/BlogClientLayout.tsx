@@ -33,6 +33,20 @@ function slugify(text: string): string {
     .replace(/-+$/, '');
 }
 
+function stripMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^#+\s+/gm, '') // Remove headers
+    .replace(/[*_`~]/g, '') // Remove formatting markers (bold, italic, code)
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Convert markdown links to plain text
+    .replace(/!\[[^\]]*\]\([^\)]+\)/g, '') // Remove markdown images
+    .replace(/^\s*[-*+]\s+/gm, '') // Remove bullet prefixes
+    .replace(/^\s*\d+\.\s+/gm, '') // Remove list numbers
+    .replace(/>\s+/g, '') // Remove blockquote markers
+    .replace(/\n+/g, ' ') // Flatten newlines to spaces
+    .trim();
+}
+
 export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale }: BlogClientLayoutProps) {
   const t = useTranslations('Blog');
   const tAdmin = useTranslations('Admin');
@@ -508,7 +522,7 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
                         </Link>
 
                         <p className="text-stone-600 leading-relaxed text-sm line-clamp-3">
-                          {content}
+                          {stripMarkdown(content)}
                         </p>
 
                         <div>

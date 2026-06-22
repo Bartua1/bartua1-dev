@@ -6,7 +6,7 @@ import '../globals.css';
 
 export function generateMetadata() {
   return {
-    title: "Guillermo Bartual | bartua1-dev",
+    title: "Gonzalo Bartual | bartua1-dev",
     description: "Personal blog and developer portfolio.",
   };
 }
@@ -19,21 +19,17 @@ interface LayoutProps {
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
 
-  // Ensure that the incoming locale is valid
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
-  // Provide messages to the client components
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
-      <body className="antialiased">
+      <body className="antialiased bg-[#f0efed]">
         <NextIntlClientProvider messages={messages}>
-          <div className="min-h-screen flex flex-col max-w-3xl mx-auto px-6 py-12">
-            {children}
-          </div>
+          {children}
         </NextIntlClientProvider>
       </body>
     </html>

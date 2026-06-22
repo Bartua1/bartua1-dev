@@ -7,7 +7,8 @@ interface PageProps {
 }
 
 export default async function BlogPage({ params }: PageProps) {
-  const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale = ['es', 'en'].includes(rawLocale) ? rawLocale : 'es';
   const t = await getTranslations('Blog');
   const tNav = await getTranslations('Navigation');
 
@@ -54,12 +55,13 @@ export default async function BlogPage({ params }: PageProps) {
   const otherLocale = locale === 'es' ? 'en' : 'es';
 
   return (
+    <div className="min-h-screen flex flex-col max-w-3xl mx-auto px-6 py-12">
     <div className="flex flex-col space-y-12">
       {/* Header */}
       <header className="flex justify-between items-baseline border-b border-stone-200 pb-6">
         <div>
           <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
-            Guillermo Bartual
+            Gonzalo Bartual
           </Link>
           <p className="text-xs text-stone-500 font-mono mt-1">/dev</p>
         </div>
@@ -131,8 +133,9 @@ export default async function BlogPage({ params }: PageProps) {
 
       {/* Footer */}
       <footer className="border-t border-stone-200 pt-8 mt-12 text-center text-xs text-stone-500 font-mono">
-        <p>© {new Date().getFullYear()} Guillermo Bartual. Hosted on Raspberry Pi.</p>
+        <p>© {new Date().getFullYear()} Gonzalo Bartual. Hosted on Raspberry Pi.</p>
       </footer>
+    </div>
     </div>
   );
 }

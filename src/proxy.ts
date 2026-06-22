@@ -4,6 +4,6 @@ import { routing } from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(es|en)/:path*']
+  // Match all routes except Next.js internals, static files, and API routes
+  matcher: ['/((?!_next|_vercel|api|.*\\..*).*)']
 };

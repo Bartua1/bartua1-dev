@@ -1,4 +1,4 @@
-# Guillermo Bartual | Development Blog & Portfolio (`bartua1-dev`)
+# Gonzalo Bartual | Development Blog & Portfolio (`bartua1-dev`)
 
 A lightweight, responsive, editorial-style personal blog and developer portfolio web application. Designed to look premium using a warm off-white and stone color scheme, and optimized to run efficiently on low-power servers like a Raspberry Pi.
 

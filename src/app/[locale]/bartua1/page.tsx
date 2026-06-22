@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
+import ScreenshotShowcase from './ScreenshotShowcase';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -298,51 +299,22 @@ export default async function PortfolioPage({ params }: PageProps) {
 
         {/* ── Projects ── */}
         <section className="px-8 py-8 border-b border-stone-100">
-          <h2 className="text-[0.65rem] font-mono uppercase tracking-widest text-stone-400 mb-5">
+          <h2 className="text-[0.65rem] font-mono uppercase tracking-widest text-stone-400 mb-6">
             {t('projects')}
           </h2>
-          <div className="rounded-2xl bg-stone-50 border border-stone-100 hover:bg-stone-100 transition-colors duration-200 group overflow-hidden">
-            {/* Card header with logo */}
-            <div className="flex items-start gap-4 p-5 pb-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden border border-stone-200 shadow-sm">
-                <Image
-                  src="/dev/assets/Foodie.png"
-                  alt="Foodie Dot"
-                  width={48}
-                  height={48}
-                  className="object-cover w-full h-full"
-                  unoptimized
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-sm font-bold text-stone-900 group-hover:text-amber-600 transition-colors duration-200">{t('foodiedotTitle')}</h3>
-                  <span className="text-[0.6rem] font-mono font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Live</span>
-                </div>
-                <p className="text-xs text-stone-500 mt-1 leading-relaxed">{t('foodiedotDesc')}</p>
-              </div>
-            </div>
-            {/* Footer row */}
-            <div className="flex items-center justify-between gap-3 flex-wrap px-5 py-3 border-t border-stone-200/70 bg-white/50">
-              <span className="text-[0.65rem] font-mono text-stone-400">{t('foodiedotTech')}</span>
-              <div className="flex gap-2 flex-wrap">
-                <a href="https://foodiedot.com"
-                  target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-white hover:bg-stone-50 text-stone-700 border border-stone-200 hover:border-stone-400 text-[0.65rem] font-semibold px-3 py-1.5 rounded-lg transition-all duration-200">
-                  <IconArrow /> {t('webVersion')}
-                </a>
-                <a href="https://apps.apple.com/es/app/foodie-dot-diario-culinario/id6761205862"
-                  target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 text-white text-[0.65rem] font-semibold px-3 py-1.5 rounded-lg transition-all duration-200">
-                  <IconApple /> {t('appStore')}
-                </a>
-                <a href="https://play.google.com/store/apps/details?id=com.foodiedot.app"
-                  target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 text-white text-[0.65rem] font-semibold px-3 py-1.5 rounded-lg transition-all duration-200">
-                  <IconGooglePlay /> {t('playStore')}
-                </a>
-              </div>
-            </div>
+
+          <div className="rounded-3xl bg-stone-50/50 border border-stone-100 p-6 sm:p-8 hover:bg-stone-50 transition-colors duration-300">
+            <ScreenshotShowcase
+              tTitle={t('foodiedotTitle')}
+              tDesc={t('foodiedotDesc')}
+              tTech={t('foodiedotTech')}
+              tFeature1={t('foodiedotFeature1')}
+              tFeature2={t('foodiedotFeature2')}
+              tFeature3={t('foodiedotFeature3')}
+              tWebVersion={t('webVersion')}
+              tAppStore={t('appStore')}
+              tPlayStore={t('playStore')}
+            />
           </div>
         </section>
 

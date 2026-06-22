@@ -1,9 +1,9 @@
 import prisma from '@/lib/prisma';
-import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { marked } from 'marked';
+import { checkIsAdmin } from '@/lib/auth';
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -54,26 +54,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   }
 
   // Extract client IP and verify admin permissions to view draft posts
-  const headersList = await headers();
-  const xForwardedFor = headersList.get('x-forwarded-for');
-  let clientIp = '127.0.0.1';
-  if (xForwardedFor) {
-    clientIp = xForwardedFor.split(',')[0].trim();
-  } else {
-    const realIp = headersList.get('x-real-ip');
-    if (realIp) {
-      clientIp = realIp;
-    }
-  }
-
-  const adminIp = process.env.ADMIN_IP || '146.158.240.144';
-  const isLocal = clientIp === '127.0.0.1' || 
-                  clientIp === '::1' || 
-                  clientIp === 'localhost' || 
-                  clientIp === '::' ||
-                  clientIp.endsWith('127.0.0.1') || 
-                  clientIp.startsWith('::ffff:127.0.0.1');
-  const isAdmin = clientIp === adminIp || isLocal;
+  const { isAdmin } = await checkIsAdmin();
 
   // If the post is not published and the user is not an admin, return 404
   if (!post.published && !isAdmin) {

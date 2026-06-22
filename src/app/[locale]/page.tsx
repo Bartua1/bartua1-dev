@@ -1,9 +1,9 @@
 import prisma from '@/lib/prisma';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { headers } from 'next/headers';
 import BlogClientLayout from '@/components/BlogClientLayout';
 import { Post } from '@prisma/client';
+import { checkIsAdmin } from '@/lib/auth';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -26,26 +26,7 @@ export default async function BlogPage({ params }: PageProps) {
   }
 
   // Extract client IP and verify admin permissions
-  const headersList = await headers();
-  const xForwardedFor = headersList.get('x-forwarded-for');
-  let clientIp = '127.0.0.1';
-  if (xForwardedFor) {
-    clientIp = xForwardedFor.split(',')[0].trim();
-  } else {
-    const realIp = headersList.get('x-real-ip');
-    if (realIp) {
-      clientIp = realIp;
-    }
-  }
-
-  const adminIp = process.env.ADMIN_IP || '146.158.240.144';
-  const isLocal = clientIp === '127.0.0.1' ||
-    clientIp === '::1' ||
-    clientIp === 'localhost' ||
-    clientIp === '::' ||
-    clientIp.endsWith('127.0.0.1') ||
-    clientIp.startsWith('::ffff:127.0.0.1');
-  const isAdmin = clientIp === adminIp || isLocal;
+  const { isAdmin, clientIp } = await checkIsAdmin();
 
   console.log(`[Blog] Client IP: ${clientIp} | Admin access: ${isAdmin}`);
 

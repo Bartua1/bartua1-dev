@@ -25,3 +25,9 @@ model Analytics {
   visitedAt DateTime @default(now())
   country   String?  // Optional metadata
 }
+
+model AdminIp {
+  id        String   @id @default(uuid())
+  ip        String   @unique
+  createdAt DateTime @default(now())
+}

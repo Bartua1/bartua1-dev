@@ -91,6 +91,12 @@
     "errorSlugUnique": "Ya existe una publicación con este slug.",
     "successCreated": "¡Publicación creada exitosamente!",
     "successUpdated": "¡Publicación actualizada exitosamente!",
-    "successDeleted": "¡Publicación eliminada exitosamente!"
+    "successDeleted": "¡Publicación eliminada exitosamente!",
+    "adminRouteTitle": "Autorizar Dirección IP",
+    "currentIp": "Tu dirección IP actual detectada por el servidor:",
+    "enterPasswordToWhitelist": "Introduce la contraseña de administración para autorizar esta IP.",
+    "whitelistSuccess": "¡Dirección IP autorizada con éxito! Redirigiendo...",
+    "whitelistButton": "Autorizar IP",
+    "ipAlreadyWhitelisted": "Esta dirección IP ya está autorizada."
   }
 }

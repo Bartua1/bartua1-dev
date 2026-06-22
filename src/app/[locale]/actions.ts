@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 
 export interface ActionState {
   success?: boolean;
@@ -131,5 +132,53 @@ export async function deletePostAction(prevState: ActionState | null, formData: 
   } catch (err) {
     console.error('Failed to delete post:', err);
     return { success: false, error: 'Something went wrong on the server.' };
+  }
+}
+
+export async function whitelistIpAction(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
+  const password = formData.get('password') as string;
+
+  if (!password) {
+    return { success: false, error: 'errorEmptyFields' };
+  }
+
+  const expectedPassword = process.env.ADMIN_PASSWORD || 'devpass123';
+  if (password !== expectedPassword) {
+    return { success: false, error: 'errorPassword' };
+  }
+
+  let clientIp = '127.0.0.1';
+  try {
+    const headersList = await headers();
+    const xForwardedFor = headersList.get('x-forwarded-for');
+    if (xForwardedFor) {
+      clientIp = xForwardedFor.split(',')[0].trim();
+    } else {
+      const realIp = headersList.get('x-real-ip');
+      if (realIp) {
+        clientIp = realIp;
+      }
+    }
+  } catch (err) {
+    console.error('[Action] Failed to retrieve headers for whitelisting:', err);
+    return { success: false, error: 'Failed to detect client IP' };
+  }
+
+  try {
+    const existing = await prisma.adminIp.findUnique({
+      where: { ip: clientIp }
+    });
+
+    if (!existing) {
+      await prisma.adminIp.create({
+        data: { ip: clientIp }
+      });
+    }
+
+    revalidatePath('/', 'layout');
+    return { success: true, message: 'whitelistSuccess' };
+  } catch (err) {
+    console.error('Failed to whitelist IP:', err);
+    return { success: false, error: 'Failed to whitelist IP in database. Make sure db push has been run.' };
   }
 }

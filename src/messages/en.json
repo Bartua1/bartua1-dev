@@ -91,6 +91,12 @@
     "errorSlugUnique": "A post with this slug already exists.",
     "successCreated": "Post created successfully!",
     "successUpdated": "Post updated successfully!",
-    "successDeleted": "Post deleted successfully!"
+    "successDeleted": "Post deleted successfully!",
+    "adminRouteTitle": "Authorize IP Address",
+    "currentIp": "Your current IP address detected by the server:",
+    "enterPasswordToWhitelist": "Enter the administration password to authorize this IP.",
+    "whitelistSuccess": "IP Address authorized successfully! Redirecting...",
+    "whitelistButton": "Authorize IP",
+    "ipAlreadyWhitelisted": "This IP address is already authorized."
   }
 }

@@ -65,5 +65,32 @@
     "universityUS": "Universidad de Sevilla",
     "degreeAI": "Master in Artificial Intelligence",
     "universityUAX": "Universidad Alfonso X el Sabio"
+  },
+  "Admin": {
+    "adminPanel": "Administration Panel",
+    "togglePanel": "Admin Mode",
+    "newPost": "New Post",
+    "editPost": "Edit Post",
+    "deletePost": "Delete Post",
+    "titleEs": "Title (Spanish)",
+    "titleEn": "Title (English)",
+    "slug": "Slug / URL (e.g. my-post)",
+    "topic": "Topic",
+    "contentEs": "Content (Spanish - Markdown)",
+    "contentEn": "Content (English - Markdown)",
+    "published": "Published",
+    "password": "Confirmation Password",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirmDelete": "Are you sure you want to delete this post?",
+    "creating": "Creating...",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "errorEmptyFields": "Please fill in the required fields in Spanish (title, content, slug, and password).",
+    "errorPassword": "The password entered is incorrect.",
+    "errorSlugUnique": "A post with this slug already exists.",
+    "successCreated": "Post created successfully!",
+    "successUpdated": "Post updated successfully!",
+    "successDeleted": "Post deleted successfully!"
   }
 }

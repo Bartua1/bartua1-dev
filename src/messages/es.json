@@ -65,5 +65,32 @@
     "universityUS": "Universidad de Sevilla",
     "degreeAI": "Máster en Inteligencia Artificial",
     "universityUAX": "Universidad Alfonso X el Sabio"
+  },
+  "Admin": {
+    "adminPanel": "Panel de Administración",
+    "togglePanel": "Modo Admin",
+    "newPost": "Nueva Publicación",
+    "editPost": "Editar Publicación",
+    "deletePost": "Eliminar Publicación",
+    "titleEs": "Título (Español)",
+    "titleEn": "Título (Inglés)",
+    "slug": "Slug / URL (ej. mi-publicacion)",
+    "topic": "Tema",
+    "contentEs": "Contenido (Español - Markdown)",
+    "contentEn": "Contenido (Inglés - Markdown)",
+    "published": "Publicado",
+    "password": "Contraseña de Confirmación",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta publicación?",
+    "creating": "Creando...",
+    "saving": "Guardando...",
+    "deleting": "Eliminando...",
+    "errorEmptyFields": "Por favor, completa los campos requeridos en español (título, contenido, slug y contraseña).",
+    "errorPassword": "La contraseña ingresada no es válida.",
+    "errorSlugUnique": "Ya existe una publicación con este slug.",
+    "successCreated": "¡Publicación creada exitosamente!",
+    "successUpdated": "¡Publicación actualizada exitosamente!",
+    "successDeleted": "¡Publicación eliminada exitosamente!"
   }
 }

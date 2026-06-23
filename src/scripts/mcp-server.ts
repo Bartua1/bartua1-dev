@@ -2,9 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 
 // Initialize Prisma client connecting to the database
-const prisma = new PrismaClient();
+const adapter = new PrismaBetterSqlite3({
+  url: "file:./dev.db",
+});
+const prisma = new PrismaClient({ adapter });
 
 // Initialize the MCP server
 const server = new McpServer({

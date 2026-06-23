@@ -29,9 +29,11 @@ Enhance the reading journey, engagement, and visual aesthetics for visitors.
   - Store reactions in the SQLite database, using a simple cookie/localStorage checks to prevent spam.
 - [ ] **📧 Newsletter Subscription Widget**
   - Add a sleek sign-up form in the footer or sidebar to capture emails, saving them to the database or integrating with a newsletter provider (e.g., Mailchimp, Buttondown).
-- [ ] **🔗 Share Sheet & Link Copier**
+- [x] **🔗 Share Sheet & Link Copier**
   - Create a sharing action button that opens native sharing on mobile or displays a sleek "Copied to clipboard!" toast on desktop.
-- [ ] **🖼️ Markdown Image Zoom / Lightbox**
+- [x] **🖼️ Insert images to the editor**
+  - Add a way for me to upload images into my md editor, store them and i should be able to either select one from all the uploaded ones or directly upload them.  
+- [x] **🖼️ Markdown Image Zoom / Lightbox**
   - Integrate a zoom-on-click library or custom client-side React component to view images/diagrams in full screen.
 
 ---

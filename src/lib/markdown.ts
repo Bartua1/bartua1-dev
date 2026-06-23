@@ -54,9 +54,24 @@ interface MarkdownOptions {
   copiedLabel: string;
 }
 
+export function getReadingTime(content: string): number {
+  if (!content) return 0;
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
 export function getHtmlFromMarkdown(content: string, options: MarkdownOptions): string {
   const customMarked = new Marked({
     renderer: {
+      heading({ text, depth }: { text: string; depth: number }) {
+        const cleanText = text.replace(/<[^>]*>/g, '');
+        const slug = cleanText
+          .toLowerCase()
+          .trim()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-');
+        return `<h${depth} id="${slug}">${text}</h${depth}>`;
+      },
       code({ text, lang }: { text: string; lang?: string }) {
         const cleanLang = lang || 'text';
         const highlighted = highlight(text, cleanLang);

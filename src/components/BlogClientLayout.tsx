@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { useState, useTransition } from 'react';
 import { createPostAction, updatePostAction, deletePostAction, ActionState } from '@/app/[locale]/actions';
+import { getReadingTime } from '@/lib/markdown';
 
 interface BlogClientLayoutProps {
   posts: Post[];
@@ -51,7 +52,8 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
   const t = useTranslations('Blog');
   const tAdmin = useTranslations('Admin');
 
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTopicsFilter, setSelectedTopicsFilter] = useState<typeof TOPICS[number][]>([]);
 
   // Admin panel state
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -176,11 +178,43 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
     });
   };
 
+  // Filter posts based on search query and active topic filters
+  const filteredPosts = initialPosts.filter(post => {
+    // 1. Admin/published check
+    if (!post.published && !isAdmin) return false;
+
+    // 2. Topic check (multi-tag filter)
+    const postTopics = post.topic.split(',').map(t => t.trim());
+    if (selectedTopicsFilter.length > 0) {
+      const hasMatchingTopic = postTopics.some(t => selectedTopicsFilter.includes(t as typeof TOPICS[number]));
+      if (!hasMatchingTopic) return false;
+    }
+
+    // 3. Search query check
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      const title = (locale === 'es' ? post.titleEs : post.titleEn).toLowerCase();
+      const content = (locale === 'es' ? post.contentEs : post.contentEn).toLowerCase();
+      const matchesTitle = title.includes(query);
+      const matchesContent = content.includes(query);
+      const matchesTopic = postTopics.some(t => t.toLowerCase().includes(query) || t.replace('-', ' ').toLowerCase().includes(query));
+      if (!matchesTitle && !matchesContent && !matchesTopic) return false;
+    }
+
+    return true;
+  });
+
   // Organize posts by topic
   const postsByTopic = TOPICS.reduce((acc, topic) => {
-    acc[topic] = initialPosts.filter(post => post.topic === topic && (post.published || isAdmin));
+    acc[topic] = filteredPosts.filter(post => {
+      const postTopics = post.topic.split(',').map(t => t.trim());
+      return postTopics.includes(topic);
+    });
     return acc;
   }, {} as Record<typeof TOPICS[number], typeof initialPosts>);
+
+  const isFiltering = searchQuery.trim() !== '' || selectedTopicsFilter.length > 0;
+  const hasAnyMatches = Object.values(postsByTopic).some(list => list.length > 0);
 
   return (
     <main className="flex-1 space-y-12">
@@ -446,101 +480,202 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
         </div>
       )}
 
+      {/* Search and Tag Filters */}
+      <div className="bg-stone-50/60 p-5 rounded-2xl border border-stone-200/80 space-y-4 shadow-2xs">
+        {/* Search Input */}
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('searchPlaceholder')}
+            className="w-full pl-10 pr-10 py-2.5 bg-white border border-stone-200 rounded-xl focus:outline-none focus:border-accent text-sm shadow-2xs transition-all duration-200"
+          />
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 select-none">
+            <svg className="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </span>
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        {/* Topic Filter Pills */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-stone-500 font-mono mr-1">{t('filterByTopic')}</span>
+          {TOPICS.map((topic) => {
+            const isSelected = selectedTopicsFilter.includes(topic);
+            return (
+              <button
+                key={topic}
+                onClick={() => {
+                  setSelectedTopicsFilter((prev) =>
+                    isSelected ? prev.filter((x) => x !== topic) : [...prev, topic]
+                  );
+                }}
+                className={`px-3 py-1.5 rounded-full font-semibold border transition-all duration-200 cursor-pointer ${
+                  isSelected
+                    ? 'bg-accent border-accent text-white hover:bg-accent-hover shadow-2xs'
+                    : 'bg-white hover:bg-stone-100 text-stone-600 border-stone-200'
+                }`}
+              >
+                {t(`topics.${topic}`)}
+              </button>
+            );
+          })}
+          {selectedTopicsFilter.length > 0 && (
+            <button
+              onClick={() => setSelectedTopicsFilter([])}
+              className="px-2.5 py-1.5 text-stone-500 hover:text-stone-800 transition-colors font-mono cursor-pointer"
+            >
+              [{t('resetFilters')}]
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Main Posts Lists organized by Topic */}
       <div className="space-y-16">
-        {TOPICS.map((topic) => {
-          const topicPosts = postsByTopic[topic] || [];
-          return (
-            <section key={topic} className="space-y-6">
-              {/* Section Header */}
-              <div className="flex justify-between items-baseline border-b border-stone-200 pb-2">
-                <h2 className="text-xs font-bold tracking-wider text-stone-400 uppercase font-mono">
-                  {t(`topics.${topic}`)}
-                </h2>
-                <span className="text-xs text-stone-400 font-mono">({topicPosts.length})</span>
-              </div>
+        {hasAnyMatches ? (
+          TOPICS.map((topic) => {
+            const topicPosts = postsByTopic[topic] || [];
+            if (isFiltering && topicPosts.length === 0) return null;
+            return (
+              <section key={topic} className="space-y-6">
+                {/* Section Header */}
+                <div className="flex justify-between items-baseline border-b border-stone-200 pb-2">
+                  <h2 className="text-xs font-bold tracking-wider text-stone-400 uppercase font-mono">
+                    {t(`topics.${topic}`)}
+                  </h2>
+                  <span className="text-xs text-stone-400 font-mono">({topicPosts.length})</span>
+                </div>
 
-              {/* Post List */}
-              <div className="space-y-10">
-                {topicPosts.length === 0 ? (
-                  <p className="text-stone-400 text-xs italic font-mono pl-1">
-                    {t('topics.noPostsInTopic')}
-                  </p>
-                ) : (
-                  topicPosts.map((post) => {
-                    const title = locale === 'es' ? post.titleEs : post.titleEn;
-                    const content = locale === 'es' ? post.contentEs : post.contentEn;
-                    const formattedDate = new Date(post.createdAt).toLocaleDateString(locale, {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    });
+                {/* Post List */}
+                <div className="space-y-10">
+                  {topicPosts.length === 0 ? (
+                    <p className="text-stone-400 text-xs italic font-mono pl-1">
+                      {t('topics.noPostsInTopic')}
+                    </p>
+                  ) : (
+                    topicPosts.map((post) => {
+                      const title = locale === 'es' ? post.titleEs : post.titleEn;
+                      const content = locale === 'es' ? post.contentEs : post.contentEn;
+                      const formattedDate = new Date(post.createdAt).toLocaleDateString(locale, {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      });
+                      const readingTime = getReadingTime(content);
 
-                    return (
-                      <article key={post.id} className="group flex flex-col space-y-3 pl-1 border-l-2 border-transparent hover:border-accent/40 transition-all duration-200">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3 text-xs font-mono text-stone-500">
-                            <time dateTime={post.createdAt instanceof Date ? post.createdAt.toISOString() : new Date(post.createdAt).toISOString()}>
-                              {formattedDate}
-                            </time>
-                            <span>•</span>
-                            <span>
-                              {t('views', { count: post.views })}
-                            </span>
-                            {!post.published && (
-                              <span className="px-2 py-0.5 rounded text-[10px] bg-amber-100 text-amber-800 border border-amber-200 uppercase font-semibold">
-                                Draft
+                      return (
+                        <article key={post.id} className="group flex flex-col space-y-3 pl-1 border-l-2 border-transparent hover:border-accent/40 transition-all duration-200">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-mono text-stone-500">
+                              <time dateTime={post.createdAt instanceof Date ? post.createdAt.toISOString() : new Date(post.createdAt).toISOString()}>
+                                {formattedDate}
+                              </time>
+                              <span>•</span>
+                              <span>{t('readingTime', { minutes: readingTime })}</span>
+                              <span>•</span>
+                              <span>
+                                {t('views', { count: post.views })}
                               </span>
+                              <span>•</span>
+                              {post.topic.split(',').map((tKey) => {
+                                const trimmed = tKey.trim();
+                                const isSelected = selectedTopicsFilter.includes(trimmed as typeof TOPICS[number]);
+                                return (
+                                  <button
+                                    key={trimmed}
+                                    onClick={() => {
+                                      setSelectedTopicsFilter((prev) =>
+                                        isSelected ? prev.filter((x) => x !== trimmed) : [...prev, trimmed as typeof TOPICS[number]]
+                                      );
+                                    }}
+                                    className={`px-2 py-0.5 rounded-sm uppercase tracking-wider text-[9px] font-bold font-mono transition-all duration-200 hover:scale-105 cursor-pointer ${
+                                      isSelected ? 'bg-accent text-white' : 'bg-stone-200 text-stone-700 hover:bg-stone-300'
+                                    }`}
+                                  >
+                                    {t(`topics.${trimmed}`)}
+                                  </button>
+                                );
+                              })}
+                              {!post.published && (
+                                <span className="px-2 py-0.5 rounded text-[10px] bg-amber-100 text-amber-800 border border-amber-200 uppercase font-semibold">
+                                  Draft
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Admin Controls next to the post */}
+                            {isAdmin && (
+                              <div className="flex space-x-2 text-xs font-mono">
+                                <button
+                                  onClick={() => handleEditClick(post)}
+                                  className="text-stone-500 hover:text-accent font-semibold transition-colors"
+                                >
+                                  {tAdmin('save') ? 'Edit' : 'Editar'}
+                                </button>
+                                <span className="text-stone-300">|</span>
+                                <button
+                                  onClick={() => setDeletingPost(post)}
+                                  className="text-stone-500 hover:text-rose-600 font-semibold transition-colors"
+                                >
+                                  {tAdmin('deletePost') ? 'Delete' : 'Eliminar'}
+                                </button>
+                              </div>
                             )}
                           </div>
 
-                          {/* Admin Controls next to the post */}
-                          {isAdmin && (
-                            <div className="flex space-x-2 text-xs font-mono">
-                              <button
-                                onClick={() => handleEditClick(post)}
-                                className="text-stone-500 hover:text-accent font-semibold transition-colors"
-                              >
-                                {tAdmin('save') ? 'Edit' : 'Editar'}
-                              </button>
-                              <span className="text-stone-300">|</span>
-                              <button
-                                onClick={() => setDeletingPost(post)}
-                                className="text-stone-500 hover:text-rose-600 font-semibold transition-colors"
-                              >
-                                {tAdmin('deletePost') ? 'Delete' : 'Eliminar'}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Post Link */}
-                        <Link href={`/posts/${post.slug}`} className="block group/title">
-                          <h3 className="text-xl font-bold text-stone-950 group-hover/title:text-accent transition-colors">
-                            {title}
-                          </h3>
-                        </Link>
-
-                        <p className="text-stone-600 leading-relaxed text-sm line-clamp-3">
-                          {stripMarkdown(content)}
-                        </p>
-
-                        <div>
-                          <Link
-                            href={`/posts/${post.slug}`}
-                            className="text-xs font-semibold text-accent hover:text-accent-hover transition-colors inline-flex items-center"
-                          >
-                            {t('readMore')} &rarr;
+                          {/* Post Link */}
+                          <Link href={`/posts/${post.slug}`} className="block group/title">
+                            <h3 className="text-xl font-bold text-stone-950 group-hover/title:text-accent transition-colors">
+                              {title}
+                            </h3>
                           </Link>
-                        </div>
-                      </article>
-                    );
-                  })
-                )}
-              </div>
-            </section>
-          );
-        })}
+
+                          <p className="text-stone-600 leading-relaxed text-sm line-clamp-3">
+                            {stripMarkdown(content)}
+                          </p>
+
+                          <div>
+                            <Link
+                              href={`/posts/${post.slug}`}
+                              className="text-xs font-semibold text-accent hover:text-accent-hover transition-colors inline-flex items-center"
+                            >
+                              {t('readMore')} &rarr;
+                            </Link>
+                          </div>
+                        </article>
+                      );
+                    })
+                  )}
+                </div>
+              </section>
+            );
+          })
+        ) : (
+          <div className="text-center py-12 bg-stone-50 border border-stone-200 rounded-xl space-y-4 font-mono">
+            <p className="text-sm text-stone-500">{t('noMatchingPosts')}</p>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedTopicsFilter([]);
+              }}
+              className="px-4 py-2 text-xs bg-stone-900 text-stone-50 font-semibold rounded-lg hover:bg-stone-800 transition-colors shadow-sm cursor-pointer"
+            >
+              {t('resetFilters')}
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

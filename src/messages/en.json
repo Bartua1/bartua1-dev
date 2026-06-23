@@ -13,6 +13,12 @@
     "noPosts": "No posts available.",
     "copy": "Copy",
     "copied": "Copied!",
+    "readingTime": "⚡ {minutes} min read",
+    "noMatchingPosts": "No articles matching your search were found.",
+    "resetFilters": "Reset Filters",
+    "searchPlaceholder": "Search articles...",
+    "filterByTopic": "Filter by topic:",
+    "tableOfContents": "Table of Contents",
     "topics": {
       "phone-development": "Phone development",
       "home-labbing": "Home Labbing",

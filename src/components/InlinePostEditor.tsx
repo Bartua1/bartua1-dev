@@ -4,7 +4,7 @@ import { Post } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { useState, useTransition, useEffect } from 'react';
 import { updateLocalizedPostAction, ActionState } from '@/app/[locale]/actions';
-import { getHtmlFromMarkdown } from '@/lib/markdown';
+import { getHtmlFromMarkdown, getReadingTime } from '@/lib/markdown';
 import { Link } from '@/i18n/routing';
 import CodeCopyButtonInitializer from '@/components/CodeCopyButtonInitializer';
 
@@ -22,6 +22,8 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
 
   const [post, setPost] = useState<Post>(initialPost);
   const [isEditing, setIsEditing] = useState(false);
+  const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
+  const [activeId, setActiveId] = useState<string>('');
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(false);
@@ -63,8 +65,95 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
   // View mode compiled markdown html
   const viewHtml = getHtmlFromMarkdown(currentContent || '', { copyLabel, copiedLabel });
 
+  // Effect to extract headings from the DOM
+  useEffect(() => {
+    if (isEditing) {
+      return;
+    }
+
+    // Query headings from DOM inside .markdown-content
+    const articleElement = document.querySelector('.markdown-content');
+    if (!articleElement) return;
+
+    const headingElements = articleElement.querySelectorAll('h2, h3');
+    const extractedHeadings: { id: string; text: string; level: number }[] = [];
+
+    headingElements.forEach((el) => {
+      const id = el.id || el.textContent?.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') || '';
+      if (!el.id && id) {
+        el.id = id;
+      }
+      extractedHeadings.push({
+        id,
+        text: el.textContent || '',
+        level: el.tagName === 'H2' ? 2 : 3,
+      });
+    });
+    // Run setHeadings asynchronously to avoid linter warnings regarding cascading renders
+    setTimeout(() => {
+      setHeadings(extractedHeadings);
+    }, 0);
+  }, [viewHtml, isEditing]);
+
+  // Scroll-spy effect to highlight current section
+  useEffect(() => {
+    if (headings.length === 0) return;
+
+    const handleScrollSpy = () => {
+      const headingElements = headings.map(h => document.getElementById(h.id)).filter(Boolean) as HTMLElement[];
+      const scrollPosition = window.scrollY + 200; // Header offset
+
+      let currentActiveId = '';
+      for (let i = 0; i < headingElements.length; i++) {
+        const el = headingElements[i];
+        if (el.offsetTop <= scrollPosition) {
+          currentActiveId = el.id;
+        } else {
+          break;
+        }
+      }
+
+      if (!currentActiveId && headingElements.length > 0) {
+        currentActiveId = headings[0].id;
+      }
+
+      setActiveId(currentActiveId);
+    };
+
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
+    handleScrollSpy();
+
+    return () => window.removeEventListener('scroll', handleScrollSpy);
+  }, [headings]);
+
+  const scrollToHeading = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 100;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const hasSidebar = !isEditing && headings.length > 0;
+  const readingTime = getReadingTime(currentContent || '');
+
   return (
-    <div className={`min-h-screen flex flex-col mx-auto px-6 py-12 transition-all duration-300 ${isEditing ? 'max-w-7xl w-full' : 'max-w-3xl'}`}>
+    <div className={`min-h-screen flex flex-col mx-auto px-6 py-12 transition-all duration-300 ${
+      isEditing 
+        ? 'max-w-7xl w-full' 
+        : hasSidebar 
+          ? 'max-w-5xl' 
+          : 'max-w-3xl'
+    }`}>
       <div className="flex flex-col space-y-12">
         {/* Header */}
         <header className={`sticky z-50 flex justify-between items-center transition-all duration-300 ease-in-out ${
@@ -122,43 +211,111 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
         {/* View / Edit Content Layout */}
         {!isEditing ? (
           /* Normal Post Detail View */
-          <article className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex items-center space-x-3 text-xs font-mono text-stone-500">
-                <time dateTime={post.createdAt instanceof Date ? post.createdAt.toISOString() : new Date(post.createdAt).toISOString()}>
-                  {formattedDate}
-                </time>
-                <span>•</span>
-                <span>
-                  {t('views', { count: post.views })}
-                </span>
-                {post.topic.split(',').map((tKey) => {
-                  const trimmed = tKey.trim();
-                  return (
-                    <span key={trimmed} className="px-2 py-0.5 rounded-sm bg-stone-200 text-stone-700 uppercase tracking-wider text-[9px] font-bold font-mono">
-                      {t(`topics.${trimmed}`)}
-                    </span>
-                  );
-                })}
-                {!post.published && (
-                  <span className="px-2 py-0.5 rounded-sm bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wider text-[9px] font-bold font-mono">
-                    Draft
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <article className={`space-y-6 ${hasSidebar ? 'lg:col-span-8' : 'lg:col-span-12'}`}>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-mono text-stone-500">
+                  <time dateTime={post.createdAt instanceof Date ? post.createdAt.toISOString() : new Date(post.createdAt).toISOString()}>
+                    {formattedDate}
+                  </time>
+                  <span>•</span>
+                  <span>{t('readingTime', { minutes: readingTime })}</span>
+                  <span>•</span>
+                  <span>
+                    {t('views', { count: post.views })}
                   </span>
-                )}
+                  <span>•</span>
+                  {post.topic.split(',').map((tKey) => {
+                    const trimmed = tKey.trim();
+                    return (
+                      <span key={trimmed} className="px-2 py-0.5 rounded-sm bg-stone-200 text-stone-700 uppercase tracking-wider text-[9px] font-bold font-mono">
+                        {t(`topics.${trimmed}`)}
+                      </span>
+                    );
+                  })}
+                  {!post.published && (
+                    <span className="px-2 py-0.5 rounded-sm bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wider text-[9px] font-bold font-mono">
+                      Draft
+                    </span>
+                  )}
+                </div>
+                <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-stone-900 leading-tight">
+                  {currentTitle}
+                </h1>
               </div>
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-stone-900 leading-tight">
-                {currentTitle}
-              </h1>
-            </div>
 
-            <div className="border-t border-stone-200 pt-6">
-              <CodeCopyButtonInitializer />
-              <div 
-                className="markdown-content"
-                dangerouslySetInnerHTML={{ __html: viewHtml }}
-              />
-            </div>
-          </article>
+              {/* Collapsible TOC on mobile/tablet */}
+              {hasSidebar && (
+                <div className="lg:hidden bg-stone-100/80 border border-stone-200 rounded-xl p-4 my-6">
+                  <details className="group">
+                    <summary className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-stone-600 font-mono cursor-pointer select-none">
+                      <span>{t('tableOfContents')}</span>
+                      <span className="transition-transform duration-200 group-open:rotate-180">
+                        ▼
+                      </span>
+                    </summary>
+                    <nav className="mt-3 pl-1 space-y-2 border-t border-stone-200/60 pt-3">
+                      {headings.map((h) => {
+                        const isActive = activeId === h.id;
+                        return (
+                          <a
+                            key={h.id}
+                            href={`#${h.id}`}
+                            onClick={(e) => scrollToHeading(e, h.id)}
+                            className={`block text-xs leading-relaxed transition-all duration-150 hover:text-accent font-medium ${
+                              h.level === 3 ? 'pl-4 text-stone-500' : 'text-stone-700'
+                            } ${
+                              isActive ? 'text-accent! font-semibold' : ''
+                            }`}
+                          >
+                            {h.text}
+                          </a>
+                        );
+                      })}
+                    </nav>
+                  </details>
+                </div>
+              )}
+
+              <div className="border-t border-stone-200 pt-6">
+                <CodeCopyButtonInitializer />
+                <div 
+                  className="markdown-content"
+                  dangerouslySetInnerHTML={{ __html: viewHtml }}
+                />
+              </div>
+            </article>
+
+            {/* Sidebar TOC on desktop */}
+            {hasSidebar && (
+              <aside className="hidden lg:block lg:col-span-4 sticky top-32 self-start max-h-[calc(100vh-10rem)] overflow-y-auto pl-4 border-l border-stone-200">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 font-mono mb-4">
+                  {t('tableOfContents')}
+                </h4>
+                <nav className="space-y-2.5">
+                  {headings.map((h) => {
+                    const isActive = activeId === h.id;
+                    return (
+                      <a
+                        key={h.id}
+                        href={`#${h.id}`}
+                        onClick={(e) => scrollToHeading(e, h.id)}
+                        className={`block text-xs leading-relaxed transition-all duration-200 hover:text-accent font-medium ${
+                          h.level === 3 ? 'pl-4 text-stone-500' : 'text-stone-700'
+                        } ${
+                          isActive 
+                            ? 'text-accent! border-l-2 border-accent pl-2 -ml-[2px] font-semibold' 
+                            : 'border-l-2 border-transparent'
+                        }`}
+                      >
+                        {h.text}
+                      </a>
+                    );
+                  })}
+                </nav>
+              </aside>
+            )}
+          </div>
         ) : (
           /* Split-screen Editor Form */
           <PostEditorForm

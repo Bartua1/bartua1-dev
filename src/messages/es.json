@@ -13,6 +13,12 @@
     "noPosts": "No hay publicaciones disponibles.",
     "copy": "Copiar",
     "copied": "¡Copiado!",
+    "readingTime": "⚡ {minutes} min de lectura",
+    "noMatchingPosts": "No se encontraron artículos que coincidan con tu búsqueda.",
+    "resetFilters": "Restablecer Filtros",
+    "searchPlaceholder": "Buscar artículos...",
+    "filterByTopic": "Filtrar por tema:",
+    "tableOfContents": "Tabla de Contenidos",
     "topics": {
       "phone-development": "Desarrollo móvil",
       "home-labbing": "Home Labbing",

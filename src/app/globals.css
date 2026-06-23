@@ -250,3 +250,67 @@ body {
   font-style: italic;
   margin-bottom: 1.25rem;
 }
+
+/* ── Prism Syntax Highlighting Styles (Tomorrow Night theme matching bg-stone-900) ── */
+.markdown-content .token.comment,
+.markdown-content .token.prolog,
+.markdown-content .token.doctype,
+.markdown-content .token.cdata {
+  color: #a8a29e; /* stone-400 */
+  font-style: italic;
+}
+.markdown-content .token.punctuation {
+  color: #d6d3d1; /* stone-300 */
+}
+.markdown-content .token.namespace {
+  opacity: .7;
+}
+.markdown-content .token.property,
+.markdown-content .token.tag,
+.markdown-content .token.boolean,
+.markdown-content .token.number,
+.markdown-content .token.constant,
+.markdown-content .token.symbol,
+.markdown-content .token.deleted {
+  color: #f43f5e; /* rose-500 */
+}
+.markdown-content .token.selector,
+.markdown-content .token.attr-name,
+.markdown-content .token.string,
+.markdown-content .token.char,
+.markdown-content .token.builtin,
+.markdown-content .token.inserted {
+  color: #34d399; /* emerald-400 */
+}
+.markdown-content .token.operator,
+.markdown-content .token.entity,
+.markdown-content .token.url,
+.markdown-content .language-css .token.string,
+.markdown-content .style .token.string {
+  color: #fbbf24; /* amber-400 */
+}
+.markdown-content .token.atrule,
+.markdown-content .token.attr-value,
+.markdown-content .token.keyword {
+  color: #60a5fa; /* blue-400 */
+}
+.markdown-content .token.function,
+.markdown-content .token.class-name {
+  color: #f472b6; /* pink-400 */
+}
+.markdown-content .token.regex,
+.markdown-content .token.important,
+.markdown-content .token.variable {
+  color: #fbbf24; /* yellow-400 */
+}
+.markdown-content .token.important,
+.markdown-content .token.bold {
+  font-weight: bold;
+}
+.markdown-content .token.italic {
+  font-style: italic;
+}
+.markdown-content .token.entity {
+  cursor: help;
+}
+

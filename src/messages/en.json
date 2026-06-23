@@ -11,6 +11,8 @@
     "readMore": "Read more",
     "publishedAt": "Published on {date}",
     "noPosts": "No posts available.",
+    "copy": "Copy",
+    "copied": "Copied!",
     "topics": {
       "phone-development": "Phone development",
       "home-labbing": "Home Labbing",

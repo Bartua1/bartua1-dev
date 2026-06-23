@@ -2,7 +2,8 @@ import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { marked } from 'marked';
+import { getHtmlFromMarkdown } from '@/lib/markdown';
+import CodeCopyButtonInitializer from '@/components/CodeCopyButtonInitializer';
 import { checkIsAdmin } from '@/lib/auth';
 
 interface PageProps {
@@ -80,7 +81,9 @@ export default async function PostDetailPage({ params }: PageProps) {
   });
 
   // Compile Markdown to HTML
-  const parsedHtml = await marked.parse(content || '');
+  const copyLabel = t('copy') || 'Copy';
+  const copiedLabel = t('copied') || 'Copied!';
+  const parsedHtml = getHtmlFromMarkdown(content || '', { copyLabel, copiedLabel });
 
   const otherLocale = locale === 'es' ? 'en' : 'es';
 
@@ -153,6 +156,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         </div>
 
         <div className="border-t border-stone-200 pt-6">
+          <CodeCopyButtonInitializer />
           <div 
             className="markdown-content"
             dangerouslySetInnerHTML={{ __html: parsedHtml }}

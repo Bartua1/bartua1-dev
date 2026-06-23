@@ -11,6 +11,8 @@
     "readMore": "Leer más",
     "publishedAt": "Publicado el {date}",
     "noPosts": "No hay publicaciones disponibles.",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
     "topics": {
       "phone-development": "Desarrollo móvil",
       "home-labbing": "Home Labbing",

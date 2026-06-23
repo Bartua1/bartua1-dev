@@ -120,7 +120,7 @@ export default async function PortfolioPage({ params }: PageProps) {
     { icon: <IconSparkles />, title: t('serviceAI'), desc: t('serviceAIDesc'), tags: ['RAG', 'Copilot', 'PyTorch', '...'] },
     { icon: <IconCode />, title: t('serviceBackend'), desc: t('serviceBackendDesc'), tags: ['Node', 'React', 'Supabase', 'SQL', '...'] },
     { icon: <IconMobile />, title: t('serviceApp'), desc: t('serviceAppDesc'), tags: ['Capacitor', 'Swift', 'React Native', '...'] },
-    { icon: <IconWorkflow />, title: t('serviceAuto'), desc: t('serviceAutoDesc'), tags: ['Hermess', 'OpenClaw', 'Power Automate', 'UiPath'] },
+    { icon: <IconWorkflow />, title: t('serviceAuto'), desc: t('serviceAutoDesc'), tags: ['Hermes', 'OpenClaw', 'Power Automate', 'UiPath'] },
   ];
 
   return (
@@ -133,20 +133,25 @@ export default async function PortfolioPage({ params }: PageProps) {
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="text-xs text-stone-500 hover:text-stone-800 transition-colors duration-200 font-mono border border-stone-200 rounded-full px-3 py-1 hover:border-stone-400"
+              className="text-xs text-stone-500 hover:text-stone-800 transition-colors duration-200 font-mono border border-stone-200 rounded-full px-2.5 py-1 sm:px-3 hover:border-stone-400"
             >
-              ← {tNav('home')}
+              <span className="sm:hidden">←</span>
+              <span className="hidden sm:inline">← {tNav('home')}</span>
             </Link>
           </div>
           <nav className="flex items-center gap-4 text-sm font-medium">
             <a href={linkedinUrl} target="_blank" rel="noopener noreferrer"
-              className="text-xs text-stone-500 hover:text-stone-900 transition-colors duration-200 flex items-center gap-1.5">
-              <IconLinkedIn /> LinkedIn
+              className="text-xs text-stone-500 hover:text-stone-900 transition-colors duration-200 flex items-center gap-1.5"
+              title="LinkedIn">
+              <IconLinkedIn />
+              <span className="hidden sm:inline">LinkedIn</span>
             </a>
             <span className="text-stone-200">|</span>
             <a href={githubUrl} target="_blank" rel="noopener noreferrer"
-              className="text-xs text-stone-500 hover:text-stone-900 transition-colors duration-200 flex items-center gap-1.5">
-              <IconGitHub /> GitHub
+              className="text-xs text-stone-500 hover:text-stone-900 transition-colors duration-200 flex items-center gap-1.5"
+              title="GitHub">
+              <IconGitHub />
+              <span className="hidden sm:inline">GitHub</span>
             </a>
             <span className="text-stone-200">|</span>
             <Link

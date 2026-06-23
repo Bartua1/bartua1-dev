@@ -7,6 +7,7 @@ import { updateLocalizedPostAction, ActionState } from '@/app/[locale]/actions';
 import { getHtmlFromMarkdown, getReadingTime } from '@/lib/markdown';
 import { Link } from '@/i18n/routing';
 import CodeCopyButtonInitializer from '@/components/CodeCopyButtonInitializer';
+import { copyTextToClipboard } from '@/lib/clipboard';
 
 interface InlinePostEditorProps {
   post: Post;
@@ -60,12 +61,21 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
 
   const copyLabel = t('copy') || 'Copy';
   const copiedLabel = t('copied') || 'Copied!';
+  const copyFailedLabel = t('copyFailed') || 'Failed';
+  const codeCopiedLabel = t('codeCopied') || 'Code copied to clipboard!';
+  const codeCopyFailedLabel = t('codeCopyFailed') || 'Failed to copy code!';
   
   const currentTitle = locale === 'es' ? post.titleEs : post.titleEn;
   const currentContent = locale === 'es' ? post.contentEs : post.contentEn;
 
   // View mode compiled markdown html
-  const viewHtml = getHtmlFromMarkdown(currentContent || '', { copyLabel, copiedLabel });
+  const viewHtml = getHtmlFromMarkdown(currentContent || '', {
+    copyLabel,
+    copiedLabel,
+    copyFailedLabel,
+    codeCopiedLabel,
+    codeCopyFailedLabel,
+  });
 
   // Effect to extract headings from the DOM
   useEffect(() => {
@@ -204,8 +214,10 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
       }
     } else {
       try {
-        await navigator.clipboard.writeText(window.location.href);
-        setShowShareToast(true);
+        const success = await copyTextToClipboard(window.location.href);
+        if (success) {
+          setShowShareToast(true);
+        }
       } catch (err) {
         console.error('Could not copy link:', err);
       }
@@ -403,6 +415,9 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
             locale={locale}
             copyLabel={copyLabel}
             copiedLabel={copiedLabel}
+            copyFailedLabel={copyFailedLabel}
+            codeCopiedLabel={codeCopiedLabel}
+            codeCopyFailedLabel={codeCopyFailedLabel}
             onSave={(updatedPost) => {
               setPost(updatedPost);
               setIsEditing(false);
@@ -464,6 +479,9 @@ interface PostEditorFormProps {
   locale: string;
   copyLabel: string;
   copiedLabel: string;
+  copyFailedLabel: string;
+  codeCopiedLabel: string;
+  codeCopyFailedLabel: string;
   onSave: (post: Post) => void;
   onCancel: () => void;
   tAdmin: (key: string) => string;
@@ -474,6 +492,9 @@ function PostEditorForm({
   locale,
   copyLabel,
   copiedLabel,
+  copyFailedLabel,
+  codeCopiedLabel,
+  codeCopyFailedLabel,
   onSave,
   onCancel,
   tAdmin,
@@ -638,7 +659,13 @@ function PostEditorForm({
     });
   };
 
-  const previewHtml = getHtmlFromMarkdown(content || '', { copyLabel, copiedLabel });
+  const previewHtml = getHtmlFromMarkdown(content || '', {
+    copyLabel,
+    copiedLabel,
+    copyFailedLabel,
+    codeCopiedLabel,
+    codeCopyFailedLabel,
+  });
 
   return (
     <form onSubmit={handleFormSubmit} className="space-y-6 animate-scale-in">

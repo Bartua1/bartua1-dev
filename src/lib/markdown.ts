@@ -52,6 +52,9 @@ function highlight(code: string, lang?: string): string {
 interface MarkdownOptions {
   copyLabel: string;
   copiedLabel: string;
+  copyFailedLabel: string;
+  codeCopiedLabel: string;
+  codeCopyFailedLabel: string;
 }
 
 export function getReadingTime(content: string): number {
@@ -84,10 +87,14 @@ export function getHtmlFromMarkdown(content: string, options: MarkdownOptions): 
       <span class="w-1.5 h-1.5 rounded-full bg-stone-500"></span>
       ${cleanLang}
     </span>
-    <button 
+    <button
+      type="button"
       class="copy-code-btn flex items-center gap-1.5 px-2.5 py-1 rounded bg-stone-800 hover:bg-stone-700 active:bg-stone-600 transition-all duration-150 text-stone-300 font-sans text-xs hover:text-white cursor-pointer"
       data-code="${encodedCode}"
       data-copied-text="${options.copiedLabel}"
+      data-failed-text="${options.copyFailedLabel}"
+      data-toast-success="${options.codeCopiedLabel}"
+      data-toast-failure="${options.codeCopyFailedLabel}"
     >
       <svg class="w-3.5 h-3.5 stroke-current" fill="none" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />

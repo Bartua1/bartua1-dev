@@ -13,6 +13,7 @@
     "noPosts": "No posts available.",
     "copy": "Copy",
     "copied": "Copied!",
+    "copyFailed": "Failed",
     "readingTime": "⚡ {minutes} min read",
     "noMatchingPosts": "No articles matching your search were found.",
     "resetFilters": "Reset Filters",
@@ -21,6 +22,8 @@
     "tableOfContents": "Table of Contents",
     "share": "Share",
     "linkCopied": "Link copied to clipboard!",
+    "codeCopied": "Code copied to clipboard!",
+    "codeCopyFailed": "Failed to copy code!",
     "topics": {
       "phone-development": "Phone development",
       "home-labbing": "Home Labbing",

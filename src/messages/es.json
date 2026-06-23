@@ -13,6 +13,7 @@
     "noPosts": "No hay publicaciones disponibles.",
     "copy": "Copiar",
     "copied": "¡Copiado!",
+    "copyFailed": "Error",
     "readingTime": "⚡ {minutes} min de lectura",
     "noMatchingPosts": "No se encontraron artículos que coincidan con tu búsqueda.",
     "resetFilters": "Restablecer Filtros",
@@ -21,6 +22,8 @@
     "tableOfContents": "Tabla de Contenidos",
     "share": "Compartir",
     "linkCopied": "¡Enlace copiado al portapapeles!",
+    "codeCopied": "¡Código copiado al portapapeles!",
+    "codeCopyFailed": "¡Error al copiar el código!",
     "topics": {
       "phone-development": "Desarrollo móvil",
       "home-labbing": "Home Labbing",

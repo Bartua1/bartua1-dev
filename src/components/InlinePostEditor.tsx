@@ -2,7 +2,7 @@
 
 import { Post } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { updateLocalizedPostAction, ActionState } from '@/app/[locale]/actions';
 import { getHtmlFromMarkdown } from '@/lib/markdown';
 import { Link } from '@/i18n/routing';
@@ -22,6 +22,30 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
 
   const [post, setPost] = useState<Post>(initialPost);
   const [isEditing, setIsEditing] = useState(false);
+
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrollingUp, setIsScrollingUp] = useState(false);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      setIsScrolled(currentScrollY > 40);
+
+      if (currentScrollY > lastScrollY && currentScrollY > 40) {
+        setIsScrollingUp(false);
+      } else if (currentScrollY < lastScrollY) {
+        setIsScrollingUp(true);
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const otherLocale = locale === 'es' ? 'en' : 'es';
   const formattedDate = new Date(post.createdAt).toLocaleDateString(locale, {
@@ -43,7 +67,13 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
     <div className={`min-h-screen flex flex-col mx-auto px-6 py-12 transition-all duration-300 ${isEditing ? 'max-w-7xl w-full' : 'max-w-3xl'}`}>
       <div className="flex flex-col space-y-12">
         {/* Header */}
-        <header className="flex justify-between items-baseline border-b border-stone-200 pb-6">
+        <header className={`sticky z-50 flex justify-between items-center transition-all duration-300 ease-in-out ${
+          isScrolled
+            ? isScrollingUp
+              ? 'top-4 py-3 px-6 bg-[#f0efed]/90 backdrop-blur-md border border-stone-200 shadow-md rounded-xl opacity-100 scale-100'
+              : 'top-4 py-2 px-4 bg-[#f0efed]/65 backdrop-blur-md border border-stone-200/40 shadow-sm rounded-xl opacity-80 scale-[0.98]'
+            : 'top-0 py-0 pb-6 border-b border-stone-200 bg-transparent opacity-100 scale-100'
+        }`}>
           <div>
             <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
               Gonzalo Bartual

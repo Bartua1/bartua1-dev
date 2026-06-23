@@ -4,6 +4,7 @@ import { Link } from '@/i18n/routing';
 import BlogClientLayout from '@/components/BlogClientLayout';
 import { Post } from '@prisma/client';
 import { checkIsAdmin } from '@/lib/auth';
+import { trackVisit } from '@/lib/analytics';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -12,6 +13,10 @@ interface PageProps {
 export default async function BlogPage({ params }: PageProps) {
   const { locale: rawLocale } = await params;
   const locale = ['es', 'en'].includes(rawLocale) ? rawLocale : 'es';
+  
+  // Track page visit
+  await trackVisit('/');
+
   const t = await getTranslations('Blog');
   const tNav = await getTranslations('Navigation');
 

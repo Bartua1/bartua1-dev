@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { checkIsAdmin } from '@/lib/auth';
 import InlinePostEditor from '@/components/InlinePostEditor';
+import { trackVisit } from '@/lib/analytics';
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -54,6 +55,9 @@ export default async function PostDetailPage({ params }: PageProps) {
   if (!post.published && !isAdmin) {
     notFound();
   }
+
+  // Track page visit
+  await trackVisit(`/posts/${slug}`);
 
   // Increment views count in database
   try {

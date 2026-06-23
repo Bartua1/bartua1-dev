@@ -118,5 +118,32 @@
     "whitelistSuccess": "¡Dirección IP autorizada con éxito! Redirigiendo...",
     "whitelistButton": "Autorizar IP",
     "ipAlreadyWhitelisted": "Esta dirección IP ya está autorizada."
+  },
+  "Privacy": {
+    "title": "Configuración de Privacidad",
+    "text": "Utilizamos analíticas para mejorar nuestro blog. Puedes aceptar compartir tu IP para obtener estadísticas de visitas más precisas, o rechazar para permanecer totalmente anónimo.",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
+  },
+  "Analytics": {
+    "dashboardTitle": "Análisis e Información de Tráfico",
+    "totalAccesses": "Accesos Totales",
+    "uniqueVisitors": "Visitantes Únicos",
+    "acceptRate": "Tasa de Consentimiento",
+    "heatmapAccesses": "Mapa de Calor de Accesos",
+    "heatmapUniques": "Mapa de Calor de IPs Únicas",
+    "selectedDayDetails": "Detalles del {date}",
+    "noAccessesSelected": "Selecciona una celda en la cuadrícula para ver el desglose de visitantes.",
+    "ipAddress": "Dirección IP",
+    "visits": "Visitas",
+    "visitedPaths": "Rutas Visitadas",
+    "lastActive": "Última Actividad",
+    "status": "Estado",
+    "consented": "Con Consentimiento",
+    "declined": "Rechazado",
+    "browser": "Navegador/SO",
+    "weeklyLabel": "Sem",
+    "popularPages": "Páginas Populares",
+    "last180Days": "Tráfico en los últimos 180 días"
   }
 }

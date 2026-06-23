@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing, Locale } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
+import PrivacyBanner from '@/components/PrivacyBanner';
 import '../globals.css';
 
 export function generateMetadata() {
@@ -30,6 +31,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <body className="antialiased bg-[#f0efed] vsc-initialized">
         <NextIntlClientProvider messages={messages}>
           {children}
+          <PrivacyBanner />
         </NextIntlClientProvider>
       </body>
     </html>

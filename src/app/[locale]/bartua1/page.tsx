@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 import ScreenshotShowcase from './ScreenshotShowcase';
+import { trackVisit } from '@/lib/analytics';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -88,6 +89,10 @@ function IconWorkflow() {
 
 export default async function PortfolioPage({ params }: PageProps) {
   const { locale } = await params;
+
+  // Track page visit
+  await trackVisit('/bartua1');
+
   const t = await getTranslations('Portfolio');
   const tNav = await getTranslations('Navigation');
 

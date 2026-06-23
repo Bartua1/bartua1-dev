@@ -24,6 +24,8 @@ model Analytics {
   slug      String   // Path name
   visitedAt DateTime @default(now())
   country   String?  // Optional metadata
+  ip        String?  // Client IP address (raw or masked)
+  userAgent String?  // Client User Agent
 }
 
 model AdminIp {

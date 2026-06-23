@@ -2,7 +2,7 @@
 
 import { Post } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import { useState, useTransition, useEffect } from 'react';
+import { useState, useTransition, useEffect, useRef } from 'react';
 import { updateLocalizedPostAction, ActionState } from '@/app/[locale]/actions';
 import { getHtmlFromMarkdown, getReadingTime } from '@/lib/markdown';
 import { Link } from '@/i18n/routing';
@@ -24,6 +24,8 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
   const [isEditing, setIsEditing] = useState(false);
   const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
   const [activeId, setActiveId] = useState<string>('');
+  const [showShareToast, setShowShareToast] = useState(false);
+  const [activeLightboxImg, setActiveLightboxImg] = useState<string | null>(null);
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(false);
@@ -143,6 +145,73 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
     }
   };
 
+  // Share toast timer effect
+  useEffect(() => {
+    if (showShareToast) {
+      const timer = setTimeout(() => setShowShareToast(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showShareToast]);
+
+  // Image lightbox click listener effect
+  useEffect(() => {
+    if (isEditing) return;
+
+    const handleImageClick = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'IMG') {
+        setActiveLightboxImg((target as HTMLImageElement).src);
+      }
+    };
+
+    const articleElement = document.querySelector('.markdown-content');
+    if (articleElement) {
+      articleElement.addEventListener('click', handleImageClick);
+    }
+
+    return () => {
+      if (articleElement) {
+        articleElement.removeEventListener('click', handleImageClick);
+      }
+    };
+  }, [viewHtml, isEditing]);
+
+  // Lightbox keyboard listener (ESC to close)
+  useEffect(() => {
+    if (!activeLightboxImg) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveLightboxImg(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeLightboxImg]);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: currentTitle,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // ignore
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setShowShareToast(true);
+      } catch (err) {
+        console.error('Could not copy link:', err);
+      }
+    }
+  };
+
   const hasSidebar = !isEditing && headings.length > 0;
   const readingTime = getReadingTime(currentContent || '');
 
@@ -224,6 +293,17 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
                   <span>
                     {t('views', { count: post.views })}
                   </span>
+                  <span>•</span>
+                  <button
+                    onClick={handleShare}
+                    className="inline-flex items-center gap-1 hover:text-accent transition-colors cursor-pointer"
+                    title={t('share')}
+                  >
+                    <svg className="w-3.5 h-3.5 fill-none stroke-current" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8.684 10.742L15.316 7.38M8.684 13.258l6.632 3.316m-1.057-6.574a3 3 0 11-6 0 3 3 0 016 0zm6 8a3 3 0 11-6 0 3 3 0 016 0zM12 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{t('share')}</span>
+                  </button>
                   <span>•</span>
                   {post.topic.split(',').map((tKey) => {
                     const trimmed = tKey.trim();
@@ -337,6 +417,44 @@ export default function InlinePostEditor({ post: initialPost, isAdmin, locale }:
           <p>© {new Date().getFullYear()} Gonzalo Bartual. Hosted on Raspberry Pi.</p>
         </footer>
       </div>
+
+      {/* Share copied toast */}
+      {showShareToast && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-stone-100 text-xs font-mono px-4 py-2.5 rounded-lg shadow-lg border border-stone-850 flex items-center gap-2 animate-fade-in-up">
+          <svg className="w-4 h-4 text-emerald-400 stroke-current fill-none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+          <span>{t('linkCopied')}</span>
+        </div>
+      )}
+
+      {/* Image Lightbox overlays */}
+      {activeLightboxImg && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/90 backdrop-blur-md cursor-zoom-out animate-fade-in"
+          onClick={() => setActiveLightboxImg(null)}
+        >
+          <button 
+            className="absolute top-6 right-6 text-stone-400 hover:text-stone-100 transition-colors p-2 bg-stone-900/50 hover:bg-stone-900 rounded-full cursor-pointer"
+            onClick={() => setActiveLightboxImg(null)}
+          >
+            <svg className="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div 
+            className="relative max-w-full max-h-full select-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={activeLightboxImg} 
+              alt="Zoomed view" 
+              className="max-w-[90vw] max-h-[85vh] rounded-xl shadow-2xl border border-stone-850 object-contain animate-scale-in"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -369,6 +487,125 @@ function PostEditorForm({
   
   const [actionState, setActionState] = useState<ActionState | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Image library & uploader states
+  const [isImageLibOpen, setIsImageLibOpen] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatusText, setUploadStatusText] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const fetchImages = async () => {
+    try {
+      const res = await fetch('/dev/api/admin/upload');
+      const data = await res.json();
+      if (data.success) {
+        setImages(data.images);
+      }
+    } catch (err) {
+      console.error('Failed to fetch images:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (isImageLibOpen) {
+      const timer = setTimeout(() => {
+        fetchImages();
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isImageLibOpen]);
+
+  const insertAtCursor = (textToInsert: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const currentVal = textarea.value;
+
+    const newVal = currentVal.substring(0, start) + textToInsert + currentVal.substring(end);
+    setContent(newVal);
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + textToInsert.length, start + textToInsert.length);
+    }, 0);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadStatusText('uploading');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/dev/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUploadStatusText('uploadSuccess');
+        fetchImages();
+        insertAtCursor(`![${file.name.split('.')[0]}](` + data.url + ')');
+        setTimeout(() => {
+          setIsImageLibOpen(false);
+          setUploadStatusText('');
+        }, 1000);
+      } else {
+        setUploadStatusText('uploadError');
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      setUploadStatusText('uploadError');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const uploadFileDirectly = async (file: File) => {
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await fetch('/dev/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        insertAtCursor(`![${file.name.split('.')[0]}](` + data.url + ')');
+      }
+    } catch (err) {
+      console.error('Direct upload failed:', err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleTextareaPaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const item = e.clipboardData.items[0];
+    if (item?.type.indexOf('image') === 0) {
+      e.preventDefault();
+      const file = item.getAsFile();
+      if (file) {
+        await uploadFileDirectly(file);
+      }
+    }
+  };
+
+  const handleTextareaDrop = async (e: React.DragEvent<HTMLTextAreaElement>) => {
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.indexOf('image') === 0) {
+      e.preventDefault();
+      await uploadFileDirectly(file);
+    }
+  };
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -476,10 +713,19 @@ function PostEditorForm({
       {/* Split Screen Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
         {/* Left Column: Markdown Editor */}
-        <div className="flex flex-col space-y-1.5">
-          <label className="block text-xs font-bold text-stone-600 uppercase font-mono">
-            ✏️ {tAdmin('markdownSource')}
-          </label>
+        <div className="flex flex-col space-y-1.5 relative">
+          <div className="flex justify-between items-center">
+            <label className="block text-xs font-bold text-stone-600 uppercase font-mono">
+              ✏️ {tAdmin('markdownSource')}
+            </label>
+            <button
+              type="button"
+              onClick={() => setIsImageLibOpen(!isImageLibOpen)}
+              className="text-xs font-bold font-mono text-stone-500 hover:text-accent flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              📷 {tAdmin('images')}
+            </button>
+          </div>
           <div className="flex-1 flex flex-col relative border border-stone-200 rounded-lg overflow-hidden bg-stone-50 shadow-inner animate-fade-in">
             {/* Editor Toolbar (Helper buttons) */}
             <div className="flex items-center gap-1 px-3 py-1.5 bg-stone-200/60 border-b border-stone-200/80 text-[10px] font-mono text-stone-500 select-none">
@@ -491,12 +737,106 @@ function PostEditorForm({
               <span className="bg-stone-300/60 px-1 py-0.5 rounded cursor-help" title="Code Block">```lang ... ```</span>
             </div>
             <textarea
+              ref={textareaRef}
               required
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              onPaste={handleTextareaPaste}
+              onDrop={handleTextareaDrop}
               className="w-full min-h-[50vh] lg:h-[65vh] p-4 font-mono text-sm leading-relaxed text-stone-800 bg-stone-50/50 focus:outline-none resize-y"
               placeholder="Write your markdown here..."
             />
+
+            {/* Absolute Image Library Panel inside Editor Area */}
+            {isImageLibOpen && (
+              <div className="absolute inset-0 bg-white/98 z-35 flex flex-col p-6 animate-scale-in border-l border-stone-200">
+                <div className="flex justify-between items-center pb-4 border-b border-stone-200 mb-4">
+                  <h3 className="text-sm font-bold font-mono text-stone-900 flex items-center gap-2">
+                    📷 {tAdmin('images')}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsImageLibOpen(false)}
+                    className="text-stone-400 hover:text-stone-700 transition-colors p-1 bg-stone-100 hover:bg-stone-200 rounded-full cursor-pointer"
+                  >
+                    <svg className="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Upload Image Section */}
+                <div className="mb-6">
+                  <label className="relative border-2 border-dashed border-stone-300 hover:border-accent rounded-xl p-5 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 bg-stone-50/50 hover:bg-stone-50">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                      disabled={isUploading}
+                    />
+                    <svg className="w-8 h-8 text-stone-400 stroke-current fill-none mb-2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-xs font-semibold text-stone-600">
+                      {isUploading 
+                        ? tAdmin(uploadStatusText || 'uploading') 
+                        : tAdmin('dragDropOrClick')}
+                    </span>
+                  </label>
+                  {uploadStatusText && !isUploading && (
+                    <p className={`text-xs mt-2 font-semibold ${
+                      uploadStatusText === 'uploadSuccess' ? 'text-emerald-600' : 'text-rose-600'
+                    }`}>
+                      {tAdmin(uploadStatusText)}
+                    </p>
+                  )}
+                </div>
+
+                {/* Image List Scrollable Grid */}
+                <div className="flex-1 overflow-y-auto pr-1">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400 font-mono mb-3">
+                    {tAdmin('insertImage')} ({images.length})
+                  </h4>
+                  {images.length === 0 ? (
+                    <p className="text-xs text-stone-400 italic font-mono py-8 text-center bg-stone-50 rounded-lg">
+                      No images uploaded yet.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                      {images.map((imgUrl) => {
+                        const filename = imgUrl.split('/').pop() || 'image';
+                        const cleanName = filename.replace(/^image_\d+_/, '').split('.')[0];
+                        return (
+                          <button
+                            key={imgUrl}
+                            type="button"
+                            onClick={() => {
+                              insertAtCursor(`![${cleanName}](${imgUrl})`);
+                              setIsImageLibOpen(false);
+                            }}
+                            className="group relative aspect-video rounded-lg overflow-hidden border border-stone-200 hover:border-accent bg-stone-100 hover:shadow-xs transition-all duration-200 cursor-pointer"
+                            title={`Click to insert: ${filename}`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={imgUrl}
+                              alt={cleanName}
+                              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-stone-900/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
+                              <span className="text-[9px] font-bold text-white uppercase tracking-wider">
+                                Insert
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

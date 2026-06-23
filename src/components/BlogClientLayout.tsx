@@ -54,6 +54,7 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopicsFilter, setSelectedTopicsFilter] = useState<typeof TOPICS[number][]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Admin panel state
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -481,36 +482,9 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
       )}
 
       {/* Search and Tag Filters */}
-      <div className="bg-stone-50/60 p-5 rounded-2xl border border-stone-200/80 space-y-4 shadow-2xs">
-        {/* Search Input */}
-        <div className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t('searchPlaceholder')}
-            className="w-full pl-10 pr-10 py-2.5 bg-white border border-stone-200 rounded-xl focus:outline-none focus:border-accent text-sm shadow-2xs transition-all duration-200"
-          />
-          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 select-none">
-            <svg className="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </span>
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors cursor-pointer"
-            >
-              <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-        </div>
-
-        {/* Topic Filter Pills */}
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="text-stone-500 font-mono mr-1">{t('filterByTopic')}</span>
+      <div className="flex items-center justify-between border-b border-stone-200 pb-3 mt-4">
+        {/* Category Links */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono">
           {TOPICS.map((topic) => {
             const isSelected = selectedTopicsFilter.includes(topic);
             return (
@@ -521,10 +495,10 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
                     isSelected ? prev.filter((x) => x !== topic) : [...prev, topic]
                   );
                 }}
-                className={`px-3 py-1.5 rounded-full font-semibold border transition-all duration-200 cursor-pointer ${
+                className={`transition-all duration-200 cursor-pointer pb-1 border-b-2 font-bold tracking-wide uppercase ${
                   isSelected
-                    ? 'bg-accent border-accent text-white hover:bg-accent-hover shadow-2xs'
-                    : 'bg-white hover:bg-stone-100 text-stone-600 border-stone-200'
+                    ? 'text-accent border-accent'
+                    : 'text-stone-400 hover:text-stone-800 border-transparent'
                 }`}
               >
                 {t(`topics.${topic}`)}
@@ -534,11 +508,52 @@ export default function BlogClientLayout({ posts: initialPosts, isAdmin, locale 
           {selectedTopicsFilter.length > 0 && (
             <button
               onClick={() => setSelectedTopicsFilter([])}
-              className="px-2.5 py-1.5 text-stone-500 hover:text-stone-800 transition-colors font-mono cursor-pointer"
+              className="text-stone-400 hover:text-stone-700 transition-colors font-mono cursor-pointer uppercase pb-1 border-b-2 border-transparent font-bold"
             >
-              [{t('resetFilters')}]
+              ({t('resetFilters')})
             </button>
           )}
+        </div>
+
+        {/* Search Toggle */}
+        <div className="flex items-center space-x-2">
+          <div className={`relative flex items-center transition-all duration-300 ease-in-out ${
+            isSearchOpen ? 'w-48 opacity-100' : 'w-0 opacity-0 pointer-events-none'
+          }`}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('searchPlaceholder')}
+              className="w-full bg-transparent border-b border-stone-300 focus:border-accent pb-1 text-sm focus:outline-none pr-6 font-mono text-stone-900"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5 fill-none stroke-current" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => {
+              setIsSearchOpen(!isSearchOpen);
+              if (isSearchOpen) {
+                setSearchQuery('');
+              }
+            }}
+            className={`p-1 text-stone-400 hover:text-accent transition-colors cursor-pointer ${
+              isSearchOpen ? 'text-accent' : ''
+            }`}
+            aria-label="Search"
+          >
+            <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
         </div>
       </div>
 

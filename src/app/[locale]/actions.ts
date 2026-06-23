@@ -182,3 +182,54 @@ export async function whitelistIpAction(prevState: ActionState | null, formData:
     return { success: false, error: 'Failed to whitelist IP in database. Make sure db push has been run.' };
   }
 }
+
+export async function updateLocalizedPostAction(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
+  const id = formData.get('id') as string;
+  const locale = formData.get('locale') as string;
+  const title = formData.get('title') as string;
+  const content = formData.get('content') as string;
+  const password = formData.get('password') as string;
+
+  if (!id || !locale || !title || !content || !password) {
+    return { success: false, error: 'errorEmptyFields' };
+  }
+
+  const expectedPassword = process.env.ADMIN_PASSWORD || 'devpass123';
+  if (password !== expectedPassword) {
+    return { success: false, error: 'errorPassword' };
+  }
+
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id }
+    });
+    if (!post) {
+      return { success: false, error: 'Post not found.' };
+    }
+
+    const updateData: {
+      titleEs?: string;
+      contentEs?: string;
+      titleEn?: string;
+      contentEn?: string;
+    } = {};
+    if (locale === 'es') {
+      updateData.titleEs = title;
+      updateData.contentEs = content;
+    } else {
+      updateData.titleEn = title;
+      updateData.contentEn = content;
+    }
+
+    await prisma.post.update({
+      where: { id },
+      data: updateData
+    });
+
+    revalidatePath('/', 'layout');
+    return { success: true, message: 'successUpdated' };
+  } catch (err) {
+    console.error('Failed to update localized post:', err);
+    return { success: false, error: 'Something went wrong on the server.' };
+  }
+}
